@@ -1,0 +1,25 @@
+#!/bin/bash
+
+LOCKFILE="<%= userdir %>/lock/<%= name %>"
+LOGFILE="<%= userdir %>/logs/<%= name %>"
+SYNCFILE="<%= userdir %>/sync/<%= name %>"
+
+[ -f $LOCKFILE ] && exit 0
+
+trap "{ rm -f $LOCKFILE ; exit 0; }" EXIT SIGINT
+umask 022
+touch $LOCKFILE
+
+#------------------------------------------------------------------------------
+SYNCER="<%= syncer %>"
+SERVER="<%= source_server %>"
+MODULE="<%= source_path %>/"
+DEST="<%= base_dest %>/<%= name %>"
+OPTS="<%= sync_opts %>"
+
+${SYNCER} ${OPTS} ${SERVER}${MODULE} $DEST > $LOGFILE 2>&1
+
+savelog -q -c 24 $LOGFILE
+touch $SYNCFILE
+exit
+#------------------------------------------------------------------------------
