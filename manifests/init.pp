@@ -12,38 +12,16 @@
 # Sample Usage:
 #
 # [Remember: No empty lines between comments and class definition]
-class remirror( $user = "mirror", $group = "nobody", $userdir = "/home/${user}", $base_dest = "/var/remirror" ) {
+class pkgmirror(
+  $user        = $pkgmirror::params::user::user,
+  $group       = $pkgmirror::params::user::group,
+  $destination = $pkgmirror::params::user::destination
+) inherits pkgmirror::params {
 
-  user { "${user}":
-    ensure => present,
-    gid => "${group}",
-    homedir => "${userdir}",
-  }
-
-  group { "${group}":
-    ensure => present,
-  }
-
-  file {
-    "${userdir}":
+  file { $destination:
       ensure => directory,
-      owner => "${user}",
-      group => "$group}",
-      mode  => 700;
-    "${userdir}/local":
-      ensure => directory,
-      owner => "${user}",
-      group => "${group}",
-      mode  => 700;
-    "${userdir}/local/bin":
-      ensure => directory,
-      owner  => "${user}",
-      group  => "${group}",
-      mode   => 700;
-    "${base_dest}":
-      ensure => directory,
-      owner  => "${user}",
-      group  => "${group}",
-      mose   => 755;
+      owner  => $user,
+      group  => $group,
+      mode   => '0755',
   }
 }
